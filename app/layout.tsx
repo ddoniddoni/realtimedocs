@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import "../styles/globals.css";
+
+import "../app/assets/styles/globals.css";
 
 export const metadata = {
   title: "Realtime Docs",
