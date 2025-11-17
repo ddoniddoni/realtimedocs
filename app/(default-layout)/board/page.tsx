@@ -1,3 +1,3 @@
-export default function BoardPage() {
+export default async function BoardPage() {
   return <main>Board</main>;
 }

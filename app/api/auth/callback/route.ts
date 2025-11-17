@@ -11,10 +11,10 @@ export async function GET(request: Request) {
     // if "next" is not a relative URL, use the default
     next = "/";
   }
-
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    console.log(origin, next);
     if (!error) {
       const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === "development";

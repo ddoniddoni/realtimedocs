@@ -20,6 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
+      "@lib": ["./app/lib/"],
+      "@lib/*": ["./app/lib/*"],
       "@ui": ["./app/core/components/"],
       "@ui/*": ["./app/core/components/*"],
       "@ui/hooks": ["./app/core/hooks/"],

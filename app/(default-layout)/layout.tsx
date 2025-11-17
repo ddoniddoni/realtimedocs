@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Menu, Copyright } from "@ui/@layout";
+import { Copyright } from "@ui/@layout";
+import Menu from "@ui/@layout/menu";
 
 export default function DefaultLayout({
   children,

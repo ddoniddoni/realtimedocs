@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 
+import { useUserStore } from "@lib/store/user";
+
 export default function Navigation() {
   return (
     <nav className="flex-1 flex">
