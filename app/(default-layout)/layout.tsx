@@ -9,7 +9,7 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-dvh">
+    <div className="flex flex-col min-h-dvh bg-background/50">
       <Menu />
       <div className="flex-1 flex flex-col">{children}</div>
       <Copyright />
