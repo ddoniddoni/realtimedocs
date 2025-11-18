@@ -4,6 +4,7 @@
 - **Supabase Auth (GitHub OAuth)**
 - **Zustand (Client State)**
 - **Middleware 기반 세션 관리**
+- **Shadcn/ui**
 
 ---
 
