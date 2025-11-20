@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown, ChevronUp, Home, User2 } from "lucide-react";
+import { ChevronUp, Home, User2 } from "lucide-react";
 
 import {
   Sidebar,
@@ -8,7 +8,6 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -19,7 +18,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/app/lib/store/user";
@@ -43,8 +41,8 @@ export default function RSidebarMenu() {
   };
 
   return (
-    <Sidebar>
-      <SidebarHeader>
+    <Sidebar className="top-[72px] h-[calc(100vh-72px)]" collapsible="icon">
+      {/* <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
@@ -65,7 +63,7 @@ export default function RSidebarMenu() {
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
-      </SidebarHeader>
+      </SidebarHeader> */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menus</SidebarGroupLabel>
@@ -85,9 +83,7 @@ export default function RSidebarMenu() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <div className="block pl-4">
-        <ModeToggle />
-      </div>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
