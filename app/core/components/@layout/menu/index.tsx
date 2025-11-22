@@ -10,9 +10,9 @@ export default function Menu() {
         <SidebarTrigger />
         <Link href="/board">
           <img
-            src="/static/gw_logo.png"
+            src="/static/wt_logo.png"
             alt="Good Worker"
-            className="w-[120px] h-[72px]"
+            className="w-[86px] h-[72px] ml-2"
           />
         </Link>
       </div>

@@ -6,8 +6,8 @@ import AuthProvider from "@lib/providers/auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata = {
-  title: "Realtime Docs",
-  description: "Realtime Docs With Team",
+  title: "With Travel",
+  description: "Travel",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
