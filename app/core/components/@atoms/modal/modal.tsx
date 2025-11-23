@@ -3,13 +3,13 @@
 import React, { forwardRef } from "react";
 import clsx from "clsx";
 import ReactModal from "react-modal";
-import { ModalProps } from "./types";
+
 import { X } from "lucide-react";
+import { AbstractModalProps } from "../../types";
 
 type ModalRef = any;
 
-function CModal(props: ModalProps, ref: React.Ref<ModalRef>) {
-  console.log("hh");
+function CModal(props: AbstractModalProps, ref: React.Ref<ModalRef>) {
   const {
     className,
     open = false,
@@ -44,8 +44,8 @@ function CModal(props: ModalProps, ref: React.Ref<ModalRef>) {
       )}
       className={clsx(
         "ReactModal__Content relative overflow-hidden flex flex-col",
-        "mx-auto w-full max-w-[780px] p-0 px-5",
-        "border border-[#6b6ba2] rounded-[15px] bg-[#18181d]"
+        "mx-auto w-full max-w-[780px] h-[400px] p-0 px-5",
+        "border-2 border-blue-500 rounded-[15px] bg-background"
       )}
       onAfterClose={() => {
         document.body.classList.remove("ReactModal__Body--open");
@@ -54,7 +54,7 @@ function CModal(props: ModalProps, ref: React.Ref<ModalRef>) {
     >
       {/* HEADER */}
       <div className="ui-modal-header relative flex justify-center px-[30px] py-[15px]">
-        <h2 className="title text-[24px] font-bold text-[#cdcdff] leading-[30px] text-center">
+        <h2 className="title text-[24px] font-bold text-blue-400 leading-[30px] text-center">
           {title}
         </h2>
 
@@ -95,5 +95,7 @@ function CModal(props: ModalProps, ref: React.Ref<ModalRef>) {
   );
 }
 
-export const Modal = React.memo(forwardRef<ModalRef, ModalProps>(CModal));
+export const Modal = React.memo(
+  forwardRef<ModalRef, AbstractModalProps>(CModal)
+);
 Modal.displayName = "Modal";

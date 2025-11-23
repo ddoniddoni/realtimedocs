@@ -4,15 +4,15 @@ import { Plus } from "lucide-react";
 
 import { useToggle } from "@ui/hooks";
 import { FloatingButton } from "@ui/@atoms";
-import { Modal } from "@ui/@atoms/modal";
 import { Button } from "@/components/ui/button";
+import ModalPlusTrip from "@ui/@atoms/modal/plus-trip/modal-plusTrip";
+import { Modal } from "@/app/core/components/@atoms/modal";
 
 export default function BoardPage() {
   const togglePlusMyTravel = useToggle();
 
   const handleClickPlus = () => {
     togglePlusMyTravel.open();
-    console.log(togglePlusMyTravel);
   };
 
   const handleClose = () => {
@@ -25,20 +25,11 @@ export default function BoardPage() {
         <Plus className="size-5" />
       </FloatingButton>
       {togglePlusMyTravel.isOn && (
-        <Modal
+        <ModalPlusTrip
+          title={"여행 등록"}
           open={togglePlusMyTravel.isOn}
           onClose={togglePlusMyTravel.close}
           close={false}
-          footer={
-            <>
-              <Button>
-                <span>확인</span>
-              </Button>
-              <Button onClick={handleClose}>
-                <span>취소</span>
-              </Button>
-            </>
-          }
         />
       )}
     </main>
