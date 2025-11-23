@@ -1,37 +1,27 @@
-"use client";
+import BoardClient from "./board-client";
+import { getMyTrips } from "./queries";
 
-import { Plus } from "lucide-react";
+export default async function BoardPage() {
+  const { trips, error } = await getMyTrips();
 
-import { useToggle } from "@ui/hooks";
-import { FloatingButton } from "@ui/@atoms";
-import { Button } from "@/components/ui/button";
-import ModalPlusTrip from "@ui/@atoms/modal/plus-trip/modal-plusTrip";
-import { Modal } from "@/app/core/components/@atoms/modal";
+  if (error === "NOT_AUTH") {
+    return (
+      <main className="flex flex-1 flex-col pt-3">
+        <p className="px-3 text-sm">로그인이 필요합니다.</p>
+      </main>
+    );
+  }
 
-export default function BoardPage() {
-  const togglePlusMyTravel = useToggle();
+  if (error) {
+    console.error("load trips error:", error);
+    return (
+      <main className="flex flex-1 flex-col pt-3">
+        <p className="px-3 text-sm text-red-500">
+          여행 목록을 불러오는데 실패했습니다.
+        </p>
+      </main>
+    );
+  }
 
-  const handleClickPlus = () => {
-    togglePlusMyTravel.open();
-  };
-
-  const handleClose = () => {
-    togglePlusMyTravel.close();
-  };
-
-  return (
-    <main className="flex flex-1 flex-col pt-3">
-      <FloatingButton size={"md"} onClick={handleClickPlus}>
-        <Plus className="size-5" />
-      </FloatingButton>
-      {togglePlusMyTravel.isOn && (
-        <ModalPlusTrip
-          title={"여행 등록"}
-          open={togglePlusMyTravel.isOn}
-          onClose={togglePlusMyTravel.close}
-          close={false}
-        />
-      )}
-    </main>
-  );
+  return <BoardClient trips={trips} />;
 }

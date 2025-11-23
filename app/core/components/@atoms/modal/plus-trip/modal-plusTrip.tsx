@@ -1,7 +1,10 @@
+"use client";
+import { useForm } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import { ModalContainerProps } from "../../../types";
 import { Modal } from "../modal";
-import { useForm } from "react-hook-form";
+import { createTripAction } from "@/app/(default-layout)/board/actions";
 
 type ModalPlusTripProps = {} & ModalContainerProps;
 type FormValues = {
@@ -17,8 +20,16 @@ export default function ModalPlusTrip(props: ModalPlusTripProps) {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    console.log("폼 데이터", data);
+  const onSubmit = async (data: FormValues) => {
+    const res = await createTripAction({
+      tripName: data.tripName,
+      country: data.country,
+    });
+
+    if (!res.ok) {
+      alert(res.message ?? "에러가 발생했습니다.");
+      return;
+    }
 
     handleClose();
   };
