@@ -10,5 +10,6 @@
 
 ### **Implemented Features**
 
-1. 🔐 GitHub OAuth 로그인
+1. 🔐 GitHub OAuth, Google OAuth 로그인
 2. 🔄 Supabase OAuth Callback → 세션 쿠키 교환
+3. 🌍 Trip Card
