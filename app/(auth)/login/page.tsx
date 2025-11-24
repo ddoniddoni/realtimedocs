@@ -1,22 +1,48 @@
 "use client";
 
 import { useState } from "react";
-
 import { createClient } from "@/utils/supabase/client";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const supabase = createClient();
-  const [loading, setLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState<
+    "github" | "google" | null
+  >(null);
+
+  const redirectTo =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/api/auth/callback`
+      : undefined;
 
   async function signInWithGithub() {
-    setLoading(true);
-    await supabase.auth.signInWithOAuth({
+    setLoadingProvider("github");
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
-      options: {
-        redirectTo: `${location.origin}/api/auth/callback`,
-      },
+      options: { redirectTo },
     });
+
+    if (error) {
+      console.error("Github login error:", error);
+      setLoadingProvider(null);
+    }
   }
+
+  async function signInWithGoogle() {
+    setLoadingProvider("google");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+
+    if (error) {
+      console.error("Google login error:", error);
+      setLoadingProvider(null);
+    }
+  }
+
+  const isGithubLoading = loadingProvider === "github";
+  const isGoogleLoading = loadingProvider === "google";
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
@@ -25,27 +51,40 @@ export default function LoginPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-3">
           Welcome back 👋
         </h1>
-        <p className="text-gray-500 mb-8">
-          로그인하고 문서를 실시간으로 편집하세요.
-        </p>
+        <p className="text-gray-500 mb-8">로그인하고 여행을 만들어보아요!</p>
 
-        {/* OAuth Buttons */}
-        <button
+        {/* Github OAuth Button */}
+        <Button
           onClick={signInWithGithub}
-          disabled={loading}
+          disabled={isGithubLoading || isGoogleLoading}
           className="w-full flex items-center justify-center gap-3 bg-black text-white py-3 rounded-lg hover:bg-gray-900 transition-all disabled:opacity-60"
         >
-          {loading ? (
+          {isGithubLoading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           ) : (
-            <>GitHub로 로그인</>
+            <>GitHub 계정으로 계속하기</>
           )}
-        </button>
+        </Button>
+
+        {/* Google OAuth Button */}
+        <Button
+          onClick={signInWithGoogle}
+          disabled={isGithubLoading || isGoogleLoading}
+          className="mt-3 w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-lg border hover:bg-gray-50 transition-all disabled:opacity-60"
+        >
+          {isGoogleLoading ? (
+            <div className="w-5 h-5 border-2 border-gray-800 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <>Google 계정으로 계속하기</>
+          )}
+        </Button>
 
         {/* Divider */}
         <div className="mt-10 flex items-center gap-2">
           <div className="grow h-px bg-gray-200" />
+          <div className="grow h-px bg-gray-200" />
           <span className="text-gray-400 text-sm">or</span>
+          <div className="grow h-px bg-gray-200" />
           <div className="grow h-px bg-gray-200" />
         </div>
 
