@@ -44,7 +44,7 @@ function CModal(props: AbstractModalProps, ref: React.Ref<ModalRef>) {
       )}
       className={clsx(
         "ReactModal__Content relative overflow-hidden flex flex-col",
-        "mx-auto w-full max-w-[780px] h-[400px] p-0 px-5",
+        "mx-auto min-w-[320px] max-w-[780px] h-[400px] p-0 px-5",
         "border-2 border-blue-500 rounded-[15px] bg-background"
       )}
       onAfterClose={() => {

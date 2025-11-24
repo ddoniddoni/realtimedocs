@@ -1,10 +1,12 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { ModalContainerProps } from "../../../types";
 import { Modal } from "../modal";
 import { createTripAction } from "@/app/(default-layout)/board/actions";
+import { CountryCombobox } from "../../country-combobox.tsx";
+import { useRouter } from "next/navigation";
 
 type ModalPlusTripProps = {} & ModalContainerProps;
 type FormValues = {
@@ -13,11 +15,13 @@ type FormValues = {
 };
 
 export default function ModalPlusTrip(props: ModalPlusTripProps) {
+  const router = useRouter();
   const { open = false, onClose, title = "", close, footer = null } = props;
   const {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
@@ -30,7 +34,7 @@ export default function ModalPlusTrip(props: ModalPlusTripProps) {
       alert(res.message ?? "에러가 발생했습니다.");
       return;
     }
-
+    router.refresh();
     handleClose();
   };
 
@@ -76,13 +80,17 @@ export default function ModalPlusTrip(props: ModalPlusTripProps) {
         </div>
         <div className="flex flex-col gap-1">
           <label className="font-medium">국가</label>
-          <input
-            type="text"
-            className="border rounded px-3 py-2"
-            placeholder="예: 일본"
-            {...register("country", {
-              required: "국가를 입력하세요.",
-            })}
+          <Controller
+            control={control}
+            name="country"
+            rules={{ required: true }}
+            render={({ field }) => (
+              <CountryCombobox
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="여행할 국가를 선택하세요"
+              />
+            )}
           />
           {errors.country && (
             <p className="text-red-500 text-sm">{errors.country.message}</p>
