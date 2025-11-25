@@ -48,15 +48,15 @@ export function CountryCombobox({
           className="w-full justify-between"
         >
           {selectedCountry ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2 text-sky-300">
               <span>{selectedCountry.flag}</span>
               <span>{selectedCountry.label}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-sky-300">
                 ({selectedCountry.region})
               </span>
             </span>
           ) : (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span className="text-sky-300">{placeholder}</span>
           )}
 
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

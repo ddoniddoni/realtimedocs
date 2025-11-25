@@ -45,7 +45,7 @@ function CModal(props: AbstractModalProps, ref: React.Ref<ModalRef>) {
       className={clsx(
         "ReactModal__Content relative overflow-hidden flex flex-col",
         "mx-auto min-w-[320px] max-w-[780px] h-[400px] p-0 px-5",
-        "border-2 border-blue-500 rounded-[15px] bg-background"
+        "border-2 border-blue-300 rounded-[15px] bg-background"
       )}
       onAfterClose={() => {
         document.body.classList.remove("ReactModal__Body--open");
@@ -75,7 +75,6 @@ function CModal(props: AbstractModalProps, ref: React.Ref<ModalRef>) {
         )}
       </div>
 
-      {/* CONTENTS */}
       {children && (
         <div
           className="ui-modal-contents flex-1 -mx-5 px-5 py-[30px] 
@@ -85,7 +84,6 @@ function CModal(props: AbstractModalProps, ref: React.Ref<ModalRef>) {
         </div>
       )}
 
-      {/* FOOTER */}
       {footer && (
         <div className="ui-modal-footer flex justify-center gap-5 px-0 pb-[30px] tablet-over:px-[40px]">
           {footer}

@@ -124,3 +124,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+input::placeholder {
+  @apply text-sky-200;
+}

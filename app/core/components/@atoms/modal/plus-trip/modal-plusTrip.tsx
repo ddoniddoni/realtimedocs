@@ -50,10 +50,10 @@ export default function ModalPlusTrip(props: ModalPlusTripProps) {
       close={close}
       footer={
         <>
-          <Button onClick={handleSubmit(onSubmit)}>
+          <Button className="bg-sky-500" onClick={handleSubmit(onSubmit)}>
             <span>확인</span>
           </Button>
-          <Button onClick={handleClose}>
+          <Button className="bg-sky-500" onClick={handleClose}>
             <span>취소</span>
           </Button>
         </>
@@ -61,10 +61,10 @@ export default function ModalPlusTrip(props: ModalPlusTripProps) {
     >
       <form className="flex flex-col gap-4 py-4">
         <div className="flex flex-col gap-1">
-          <label className="font-medium">여행 이름</label>
+          <label className="text-sky-300">여행 이름</label>
           <input
             type="text"
-            className="border rounded px-3 py-2"
+            className="border text-sm text-sky-300 rounded px-3 py-2"
             placeholder="예: 일본 여행"
             {...register("tripName", {
               required: "여행 이름을 입력하세요.",
@@ -79,7 +79,7 @@ export default function ModalPlusTrip(props: ModalPlusTripProps) {
           )}
         </div>
         <div className="flex flex-col gap-1">
-          <label className="font-medium">국가</label>
+          <label className="font-medium text-sky-300">국가</label>
           <Controller
             control={control}
             name="country"
