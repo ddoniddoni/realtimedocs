@@ -17,13 +17,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { InviteFriendButton } from "@/app/core/components";
 
 type MyTripClientProps = {
   data: TripDetail;
 };
 
 export default function MyTripClient({ data }: MyTripClientProps) {
-  const { trip, days, schedulesByDayId } = data;
+  const { trip, days, schedulesByDayId, isOwner } = data;
 
   const [isPending, startTransition] = useTransition();
 
@@ -74,12 +75,16 @@ export default function MyTripClient({ data }: MyTripClientProps) {
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* 상단 Trip 정보 */}
-      <section className="space-y-1">
-        <h1 className="text-xl font-semibold">{trip.trip_name}</h1>
-        <p className="text-sm text-muted-foreground">{trip.country}</p>
-      </section>
+      <section className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="text-xl font-semibold">{trip.trip_name}</h1>
+          <p className="text-sm text-muted-foreground">{trip.country}</p>
+        </div>
 
-      {/* 여행 날짜 선택 (DateRangePicker) */}
+        {/*  (소유자만 보임) 친구 초대 버튼 */}
+        {isOwner && <InviteFriendButton tripId={trip.id} />}
+      </section>
+      {/* 여행 날짜 선택  */}
       <section className="space-y-2">
         <p className="text-sm font-medium">여행 날짜</p>
 
@@ -121,7 +126,12 @@ export default function MyTripClient({ data }: MyTripClientProps) {
             </PopoverContent>
           </Popover>
 
-          <Button size="sm" onClick={handleApplyDateRange} disabled={isPending}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleApplyDateRange}
+            disabled={isPending}
+          >
             {isPending ? "저장 중..." : "적용"}
           </Button>
         </div>

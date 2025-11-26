@@ -140,3 +140,94 @@ export async function updateTripDateRangeAction(
   revalidatePath(`/my-trip/${tripId}`);
   return { ok: true };
 }
+
+export async function inviteFriendAction(input: {
+  tripId: string;
+  email: string;
+}) {
+  const { tripId, email } = input;
+  if (!email) {
+    return { ok: false, error: "이메일을 확인해주세요." as const };
+  }
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { ok: false, error: "NOT_AUTH" as const };
+  }
+
+  const { data: trip, error: tripError } = await supabase
+    .from("trips")
+    .select("id, user_id")
+    .eq("id", tripId)
+    .single();
+
+  if (tripError || !trip) {
+    console.error("trip load error:", tripError);
+    return { ok: false, error: "여행 정보를 찾을 수 없습니다." as const };
+  }
+
+  if (trip.user_id !== user.id) {
+    return { ok: false, error: "NOT_OWNER" as const };
+  }
+
+  const { data: invitedUser, error: invitedError } = await supabase
+    .from("users")
+    .select("id")
+    .eq("email", email)
+    .single();
+
+  if (invitedError || !invitedUser) {
+    return {
+      ok: false,
+      error: "해당 이메일로 가입된 사용자가 없습니다." as const,
+    };
+  }
+
+  if (invitedUser.id === user.id) {
+    return {
+      ok: false,
+      error: "자기 자신은 초대할 수 없습니다." as const,
+    };
+  }
+
+  const { data: existing, error: existingError } = await supabase
+    .from("trip_members")
+    .select("id")
+    .eq("trip_id", tripId)
+    .eq("user_id", invitedUser.id)
+    .maybeSingle();
+
+  if (existingError) {
+    console.error("trip_members check error:", existingError);
+  }
+
+  if (existing) {
+    return {
+      ok: false,
+      error: "이미 이 여행에 참여 중인 사용자입니다." as const,
+    };
+  }
+
+  const { error: insertError } = await supabase.from("trip_members").insert({
+    trip_id: tripId,
+    user_id: invitedUser.id,
+    role: "member",
+  });
+
+  if (insertError) {
+    console.error("trip_members insert error:", insertError);
+    return {
+      ok: false,
+      error: "초대 저장 중 오류가 발생했습니다." as const,
+    };
+  }
+
+  revalidatePath(`/my-trip/${tripId}`);
+
+  return { ok: true as const };
+}

@@ -25,8 +25,8 @@ export type TripScheduleItem = {
   trip_day_id: string;
   title: string;
   description: string | null;
-  start_time: string | null; // time -> string
-  end_time: string | null; // time -> string
+  start_time: string | null;
+  end_time: string | null;
   sort_order: number | null;
   location_name: string | null;
   location_lat: number | null;
@@ -48,6 +48,7 @@ export type TripDetail = {
   days: TripDay[];
   schedulesByDayId: Record<string, TripScheduleItem[]>;
   checklist: TripChecklistItem[];
+  isOwner: boolean;
 };
 
 export type GetTripDetailResult = {
@@ -75,7 +76,6 @@ export async function getTripDetail(
     .from("trips")
     .select("*")
     .eq("id", tripId)
-    .eq("user_id", user.id)
     .single();
 
   if (tripError || !trip) {
@@ -87,6 +87,7 @@ export async function getTripDetail(
     return { data: null, error: tripError ?? "NOT_FOUND" };
   }
 
+  const isOwner = trip.user_id === user.id;
   // 3) trip_days 가져오기 (day_index 기준 정렬)
   const { data: days, error: daysError } = await supabase
     .from("trip_days")
@@ -144,6 +145,7 @@ export async function getTripDetail(
       days: safeDays as TripDay[],
       schedulesByDayId,
       checklist: (checklist ?? []) as TripChecklistItem[],
+      isOwner,
     },
     error: null,
   };
