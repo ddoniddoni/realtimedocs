@@ -31,24 +31,22 @@ export async function updateTripDateRangeAction(
     .from("trips")
     .select("id")
     .eq("id", tripId)
-    .eq("user_id", user.id)
     .single();
-
   if (tripError || !trip) {
     console.error("updateTripDateRangeAction: tripError", tripError);
     return { ok: false, error: "NOT_FOUND" };
   }
 
   // 3) trips에 start_date, end_date 업데이트
-  const { error: updateTripError } = await supabase
+  const { data: updatedRows, error: updateTripError } = await supabase
     .from("trips")
     .update({
       start_date: startDate,
       end_date: endDate,
     })
     .eq("id", tripId)
-    .eq("user_id", user.id);
-  console.log(updateTripError);
+    .select("id, start_date, end_date");
+
   if (updateTripError) {
     console.error(
       "updateTripDateRangeAction: updateTripError",

@@ -12,7 +12,6 @@ export default async function MyTripPage({ params }: MyTripPageProps) {
   const tripId = id;
 
   const { data, error } = await getTripDetail(tripId);
-
   if (error === "NOT_AUTH") {
     return (
       <main className="flex flex-1 flex-col px-4 pt-4">

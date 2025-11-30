@@ -19,7 +19,6 @@ export default function TripCard(props: TripCardProps) {
   const router = useRouter();
   const { getByValue } = useCountries();
   const countryInfo = getByValue(country);
-  console.log(props);
 
   const createdDate = created_at
     ? format(new Date(created_at), "yyyy.MM.dd", { locale: ko })
