@@ -37,8 +37,8 @@ export default async function MyTripPage({ params }: MyTripPageProps) {
   }
 
   return (
-    <main className="flex flex-1 flex-col px-4 py-4 gap-4">
+    <>
       <MyTripClient data={data} />
-    </main>
+    </>
   );
 }

@@ -45,7 +45,7 @@ export default function LoginPage() {
   const isGoogleLoading = loadingProvider === "google";
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+    <main className="min-h-screen flex items-center justify-center bg-black px-6">
       <div className="w-full max-w-md bg-white rounded-xl shadow-sm border px-8 py-10">
         {/* Title */}
         <h1 className="text-3xl font-bold text-gray-900 mb-3">
@@ -70,7 +70,7 @@ export default function LoginPage() {
         <Button
           onClick={signInWithGoogle}
           disabled={isGithubLoading || isGoogleLoading}
-          className="mt-3 w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-lg border hover:bg-gray-50 transition-all disabled:opacity-60"
+          className="mt-3 w-full flex items-center justify-center gap-3 bg-white text-gray-800 py-3 rounded-lg border shadow-sm hover:bg-gray-50 transition-all disabled:opacity-60"
         >
           {isGoogleLoading ? (
             <div className="w-5 h-5 border-2 border-gray-800 border-t-transparent rounded-full animate-spin" />

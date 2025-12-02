@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { InviteFriendButton } from "@/app/core/components";
+import { TripDays } from "./tripDays";
 
 type MyTripClientProps = {
   data: TripDetail;
@@ -73,7 +74,7 @@ export default function MyTripClient({ data }: MyTripClientProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-4">
+    <div className="flex flex-col gap-6 pt-2.5 pb-2.5">
       {/* 상단 Trip 정보 */}
       <section className="flex items-start justify-between gap-3">
         <div className="space-y-1">
@@ -140,86 +141,7 @@ export default function MyTripClient({ data }: MyTripClientProps) {
           날짜를 적용하면 해당 기간에 맞춰 Day1 ~ DayN이 자동 생성/갱신됩니다.
         </p>
       </section>
-
-      <section className="mt-2">
-        <h2 className="mb-3 text-base font-semibold">여행 일정</h2>
-
-        {days.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            아직 Day가 없습니다. 여행 날짜를 먼저 설정해주세요.
-          </p>
-        ) : (
-          <>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {days.map((day) => (
-                <Button
-                  key={day.id}
-                  onClick={() => setSelectedDayId(day.id)}
-                  className={cn(
-                    "rounded-full px-4 py-1 text-sm border whitespace-nowrap",
-                    selectedDayId === day.id
-                      ? "bg-sky-500 text-white border-sky-500"
-                      : "bg-white text-slate-700 border-slate-300"
-                  )}
-                >
-                  Day {day.day_index}
-                </Button>
-              ))}
-            </div>
-
-            {selectedDayId && (
-              <p className="mt-3 text-sm text-muted-foreground">
-                {(() => {
-                  const day = days.find((d) => d.id === selectedDayId);
-                  return day
-                    ? format(new Date(day.date), "yyyy.MM.dd (EEE)")
-                    : null;
-                })()}
-              </p>
-            )}
-
-            {/* 일정 리스트 */}
-            <div className="mt-4 space-y-3">
-              {(!selectedDayId || selectedSchedules.length === 0) && (
-                <p className="rounded-md border p-4 text-sm text-muted-foreground">
-                  아직 일정이 없습니다. 다음 단계에서 “일정 추가” 기능을 붙여서
-                  이 Day에 스케줄을 채울 예정입니다.
-                </p>
-              )}
-
-              {selectedDayId &&
-                selectedSchedules.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-lg border p-4 shadow-sm bg-white"
-                  >
-                    <div className="flex justify-between gap-2">
-                      <h3 className="font-medium">{item.title}</h3>
-                      {item.start_time && (
-                        <span className="text-xs text-slate-500">
-                          {item.start_time}
-                          {item.end_time ? ` ~ ${item.end_time}` : ""}
-                        </span>
-                      )}
-                    </div>
-
-                    {item.location_name && (
-                      <p className="mt-1 text-sm text-slate-600">
-                        📍 {item.location_name}
-                      </p>
-                    )}
-
-                    {item.description && (
-                      <p className="mt-2 text-sm text-slate-500">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </>
-        )}
-      </section>
+      <TripDays days={days} schedulesByDayId={schedulesByDayId} />
     </div>
   );
 }
