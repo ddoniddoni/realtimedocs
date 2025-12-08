@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -11,13 +10,16 @@ import type { TripDetail } from "./queries";
 type Props = {
   days: TripDetail["days"];
   schedulesByDayId: TripDetail["schedulesByDayId"];
+  selectedDayId: string | null;
+  onSelectDay: (dayId: string) => void;
 };
 
-export function TripDays({ days, schedulesByDayId }: Props) {
-  const [selectedDayId, setSelectedDayId] = useState<string | null>(() => {
-    return days[0]?.id ?? null;
-  });
-
+export function TripDays({
+  days,
+  schedulesByDayId,
+  selectedDayId,
+  onSelectDay,
+}: Props) {
   const selectedSchedules =
     selectedDayId && schedulesByDayId[selectedDayId]
       ? schedulesByDayId[selectedDayId]
@@ -38,7 +40,7 @@ export function TripDays({ days, schedulesByDayId }: Props) {
             {days.map((day) => (
               <Button
                 key={day.id}
-                onClick={() => setSelectedDayId(day.id)}
+                onClick={() => onSelectDay(day.id)}
                 className={cn(
                   "rounded-full px-4 py-1 text-sm border whitespace-nowrap",
                   selectedDayId === day.id
@@ -69,8 +71,8 @@ export function TripDays({ days, schedulesByDayId }: Props) {
           <div className="mt-4 space-y-3">
             {(!selectedDayId || selectedSchedules.length === 0) && (
               <p className="rounded-md border p-4 text-sm text-muted-foreground">
-                아직 일정이 없습니다. 다음 단계에서 “일정 추가” 기능을 붙여서 이
-                Day에 스케줄을 채울 예정입니다.
+                아직 일정이 없습니다. 지도를 클릭해서 이 Day에 스케줄을
+                추가해보세요.
               </p>
             )}
 

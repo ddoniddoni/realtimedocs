@@ -1,10 +1,11 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useState, useTransition } from "react";
 import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import type { TripDetail } from "./queries";
 import { updateTripDateRangeAction } from "./actions";
@@ -19,6 +20,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { InviteFriendButton } from "@/app/core/components";
 import { TripDays } from "./tripDays";
+import { TripMap } from "./trip-map";
 
 type MyTripClientProps = {
   data: TripDetail;
@@ -27,16 +29,16 @@ type MyTripClientProps = {
 export default function MyTripClient({ data }: MyTripClientProps) {
   const { trip, days, schedulesByDayId, isOwner } = data;
 
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  // DateRange (여행 시작/종료일)
+  const [isSavingDateRange, startDateRangeTransition] = useTransition();
+
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     const from = trip.start_date ? new Date(trip.start_date) : undefined;
     const to = trip.end_date ? new Date(trip.end_date) : undefined;
     return { from, to };
   });
 
-  // Day 탭 선택 상태
   const [selectedDayId, setSelectedDayId] = useState<string | null>(() => {
     return days[0]?.id ?? null;
   });
@@ -55,7 +57,9 @@ export default function MyTripClient({ data }: MyTripClientProps) {
     const startDate = format(dateRange.from, "yyyy-MM-dd");
     const endDate = format(dateRange.to, "yyyy-MM-dd");
 
-    startTransition(async () => {
+    startDateRangeTransition(async () => {
+      console.log("[DEBUG] handleApplyDateRange 호출됨");
+
       const res = await updateTripDateRangeAction({
         tripId: trip.id,
         startDate,
@@ -67,25 +71,40 @@ export default function MyTripClient({ data }: MyTripClientProps) {
         return;
       }
 
-      // 서버 액션에서 revalidatePath 호출하므로
-      // 여기서는 UI 피드백만 간단히
       console.log("여행 날짜/Day 재생성 완료");
+      router.refresh();
+    });
+  };
+
+  const handlePlaceSelected = (place: {
+    lat: number;
+    lng: number;
+    name: string;
+    address?: string;
+    placeId?: string;
+  }) => {
+    if (!selectedDayId) {
+      alert("먼저 Day를 선택해주세요.");
+      return;
+    }
+
+    console.log("[DEBUG] handlePlaceSelected 호출됨", {
+      selectedDayId,
+      place,
     });
   };
 
   return (
     <div className="flex flex-col gap-6 pt-2.5 pb-2.5">
-      {/* 상단 Trip 정보 */}
       <section className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <h1 className="text-xl font-semibold">{trip.trip_name}</h1>
           <p className="text-sm text-muted-foreground">{trip.country}</p>
         </div>
 
-        {/*  (소유자만 보임) 친구 초대 버튼 */}
         {isOwner && <InviteFriendButton tripId={trip.id} />}
       </section>
-      {/* 여행 날짜 선택  */}
+
       <section className="space-y-2">
         <p className="text-sm font-medium">여행 날짜</p>
 
@@ -93,12 +112,13 @@ export default function MyTripClient({ data }: MyTripClientProps) {
           <Popover>
             <PopoverTrigger asChild>
               <Button
+                type="button"
                 variant="outline"
                 className={cn(
                   "m-w-[290px] justify-start text-left font-normal",
                   !dateRange?.from && !dateRange?.to && "text-muted-foreground"
                 )}
-                disabled={isPending}
+                disabled={isSavingDateRange}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {dateRange?.from ? (
@@ -128,12 +148,13 @@ export default function MyTripClient({ data }: MyTripClientProps) {
           </Popover>
 
           <Button
+            type="button"
             variant="outline"
             size="sm"
             onClick={handleApplyDateRange}
-            disabled={isPending}
+            disabled={isSavingDateRange}
           >
-            {isPending ? "저장 중..." : "적용"}
+            {isSavingDateRange ? "저장 중..." : "적용"}
           </Button>
         </div>
 
@@ -141,7 +162,26 @@ export default function MyTripClient({ data }: MyTripClientProps) {
           날짜를 적용하면 해당 기간에 맞춰 Day1 ~ DayN이 자동 생성/갱신됩니다.
         </p>
       </section>
-      <TripDays days={days} schedulesByDayId={schedulesByDayId} />
+
+      <section className="flex gap-4 min-h-[480px]">
+        <div className="w-[320px] shrink-0">
+          <TripDays
+            days={days}
+            schedulesByDayId={schedulesByDayId}
+            selectedDayId={selectedDayId}
+            onSelectDay={setSelectedDayId}
+          />
+        </div>
+
+        <div className="flex-1 min-h-[480px]">
+          <TripMap
+            trip={trip}
+            selectedDayId={selectedDayId}
+            schedules={selectedSchedules}
+            onPlaceSelected={handlePlaceSelected}
+          />
+        </div>
+      </section>
     </div>
   );
 }
