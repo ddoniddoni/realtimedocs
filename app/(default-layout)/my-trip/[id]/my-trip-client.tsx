@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import type { TripDetail } from "./queries";
 import { updateTripDateRangeAction } from "./actions";
 
+import { InviteFriendButton } from "@ui";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,9 +19,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { InviteFriendButton } from "@/app/core/components";
-import { TripDays } from "./tripDays";
-import { TripMap } from "./trip-map";
+import { ScheduleCreateModal } from "@ui/@atoms/modal/schedule-create/modal-create-schedule";
+
+import { TripDays } from "./trip-days";
+import TripMap, { MapSelectedPlace } from "./trip-map";
 
 type MyTripClientProps = {
   data: TripDetail;
@@ -47,6 +49,11 @@ export default function MyTripClient({ data }: MyTripClientProps) {
     selectedDayId && schedulesByDayId[selectedDayId]
       ? schedulesByDayId[selectedDayId]
       : [];
+
+  const [selectedPlace, setSelectedPlace] = useState<MapSelectedPlace | null>(
+    null
+  );
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 
   const handleApplyDateRange = () => {
     if (!dateRange?.from || !dateRange.to) {
@@ -76,13 +83,7 @@ export default function MyTripClient({ data }: MyTripClientProps) {
     });
   };
 
-  const handlePlaceSelected = (place: {
-    lat: number;
-    lng: number;
-    name: string;
-    address?: string;
-    placeId?: string;
-  }) => {
+  const handlePlaceSelected = (place: MapSelectedPlace) => {
     if (!selectedDayId) {
       alert("먼저 Day를 선택해주세요.");
       return;
@@ -92,6 +93,9 @@ export default function MyTripClient({ data }: MyTripClientProps) {
       selectedDayId,
       place,
     });
+
+    setSelectedPlace(place);
+    setIsScheduleModalOpen(true);
   };
 
   return (
@@ -163,8 +167,8 @@ export default function MyTripClient({ data }: MyTripClientProps) {
         </p>
       </section>
 
-      <section className="flex gap-4 min-h-[480px]">
-        <div className="w-[320px] shrink-0">
+      <section className="flex flex-col gap-4 min-h-[480px]">
+        <div className="w-[500px] shrink-0">
           <TripDays
             days={days}
             schedulesByDayId={schedulesByDayId}
@@ -173,7 +177,7 @@ export default function MyTripClient({ data }: MyTripClientProps) {
           />
         </div>
 
-        <div className="flex-1 min-h-[480px]">
+        <div className="flex-1">
           <TripMap
             trip={trip}
             selectedDayId={selectedDayId}
@@ -182,6 +186,16 @@ export default function MyTripClient({ data }: MyTripClientProps) {
           />
         </div>
       </section>
+
+      {/* 일정 추가 모달 */}
+      {selectedPlace && selectedDayId && (
+        <ScheduleCreateModal
+          open={isScheduleModalOpen}
+          onClose={() => setIsScheduleModalOpen(false)}
+          dayId={selectedDayId}
+          place={selectedPlace}
+        />
+      )}
     </div>
   );
 }

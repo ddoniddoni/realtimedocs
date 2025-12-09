@@ -229,3 +229,84 @@ export async function inviteFriendAction(input: {
 
   return { ok: true as const };
 }
+
+export type CreateTripScheduleItemInput = {
+  tripDayId: string;
+  title: string;
+  startTime: string;
+  endTime?: string | null;
+  locationName: string;
+  lat: number;
+  lng: number;
+  address?: string | null;
+  memo?: string | null;
+};
+
+export async function createTripScheduleItemAction(
+  input: CreateTripScheduleItemInput
+) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { ok: false, error: "로그인이 필요합니다." };
+  }
+
+  const {
+    tripDayId,
+    title,
+    startTime,
+    endTime,
+    locationName,
+    lat,
+    lng,
+    address,
+    memo,
+  } = input;
+
+  const start_time = `${startTime}:00`;
+  const end_time = endTime ? `${endTime}:00` : null;
+
+  const { data: lastItem, error: lastError } = await supabase
+    .from("trip_schedule_items")
+    .select("sort_order")
+    .eq("trip_day_id", tripDayId)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (lastError) {
+    console.error("load last sort_order error:", lastError);
+  }
+
+  const nextSortOrder =
+    (lastItem?.sort_order !== null && lastItem?.sort_order !== undefined
+      ? lastItem.sort_order
+      : 0) + 1;
+
+  const { error: insertError } = await supabase
+    .from("trip_schedule_items")
+    .insert({
+      trip_day_id: tripDayId,
+      title,
+      start_time,
+      end_time,
+      sort_order: nextSortOrder,
+      location_name: locationName,
+      lat,
+      lng,
+      address: address ?? null,
+      memo: memo ?? null,
+    });
+
+  if (insertError) {
+    console.error("createTripScheduleItemAction error:", insertError);
+    return { ok: false, error: "일정 추가 중 오류가 발생했습니다." };
+  }
+
+  return { ok: true };
+}

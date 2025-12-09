@@ -29,9 +29,11 @@ export type TripScheduleItem = {
   end_time: string | null;
   sort_order: number | null;
   location_name: string | null;
-  location_lat: number | null;
-  location_lng: number | null;
+  lat: number | null;
+  lng: number | null;
   created_at: string;
+  address: string | null;
+  memo: string | null;
 };
 
 export type TripChecklistItem = {
